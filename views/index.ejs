@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>🍪 <%= titulo %> - Node.js + Express</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+    <style>
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .card { 
+            background: #f8f9fa; 
+            border-radius: 8px; 
+            padding: 1.5rem; 
+            margin: 1rem 0; 
+            border-left: 4px solid #9b4dca; 
+        }
+        .concept { 
+            background: #e3f2fd; 
+            padding: 1rem; 
+            border-radius: 4px; 
+            margin: 1rem 0; 
+        }
+        .code-example { 
+            background: #263238; 
+            color: #ffffff; 
+            padding: 1rem; 
+            border-radius: 4px; 
+            font-family: 'Courier New', monospace; 
+            overflow-x: auto; 
+        }
+        .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+        .status { 
+            padding: 0.5rem 1rem; 
+            border-radius: 4px; 
+            margin: 0.5rem 0; 
+            display: inline-block; 
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #cce5ff; color: #004085; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍪 <%= mensajeBienvenida %></h1>
+            <p class="status success">
+                ✅ <strong>¡Cookie establecida!</strong> Hemos registrado tu visita el: 
+                <strong><%= fechaCookie %></strong>
+            </p>
+        </header>
+
+        <main>
+            <!-- Sección: ¿Qué son las Cookies? -->
+            <div class="card">
+                <h2>📚 ¿Qué son las Cookies?</h2>
+                <p>Las cookies son pequeños archivos de texto que los sitios web almacenan en tu navegador para:</p>
+                <ul>
+                    <li><strong>Recordar información:</strong> Como preferencias de usuario</li>
+                    <li><strong>Mantener sesiones:</strong> Para saber si estás logueado</li>
+                    <li><strong>Personalizar experiencia:</strong> Configuraciones específicas</li>
+                    <li><strong>Analítica:</strong> Rastrear comportamiento del usuario</li>
+                </ul>
+            </div>
+
+            <!-- Sección: Funcionalidades -->
+            <div class="card">
+                <h2>🔧 Funcionalidades Disponibles</h2>
+                <p>Explora las diferentes operaciones con cookies:</p>
+                
+                <div class="btn-group">
+                    <a href="/leer-cookie" class="button">📖 Leer Cookie</a>
+                    <a href="/eliminar-cookie" class="button">🗑️ Eliminar Cookie</a>
+                    <a href="/listar-cookies" class="button">📋 Listar Todas</a>
+                </div>
+
+                <% if (estadisticas) { %>
+                <div class="concept">
+                    <h3>📊 Estadísticas de la Sesión</h3>
+                    <p><strong>Total de cookies activas:</strong> <%= estadisticas.totalCookies %></p>
+                    <p><strong>Servidor ejecutándose desde:</strong> <%= estadisticas.tiempoEjecucion %></p>
+                    <p><strong>Puerto:</strong> <%= estadisticas.puerto %></p>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- Sección: Conceptos Importantes -->
+            <div class="card">
+                <h2>💡 Conceptos Importantes</h2>
+                
+                <div class="concept">
+                    <h3>🔒 Seguridad en Cookies</h3>
+                    <p>En este ejemplo implementamos buenas prácticas:</p>
+                    <ul>
+                        <li><strong>httpOnly:</strong> No accesible desde JavaScript (previene XSS)</li>
+                        <li><strong>secure:</strong> Solo se envía por HTTPS en producción</li>
+                        <li><strong>sameSite:</strong> Protección contra ataques CSRF</li>
+                        <li><strong>maxAge:</strong> Tiempo de expiración controlado</li>
+                    </ul>
+                </div>
+
+                <div class="concept">
+                    <h3>⚙️ Cómo Funciona el Código</h3>
+                    <p>Cuando visitas esta página, el servidor ejecuta:</p>
+                    <div class="code-example">
+res.cookie('nodeCookie', fechaVisita, {
+    maxAge: 24 * 60 * 60 * 1000,  // 24 horas
+    httpOnly: true,               // Solo HTTP
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'           // Anti-CSRF
+});
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Pruebas con API -->
+            <div class="card">
+                <h2>🧪 Pruebas con API</h2>
+                <p class="status info">
+                    💡 <strong>Para desarrolladores:</strong> Usa el archivo <code>api.http</code> 
+                    con la extensión REST Client de VS Code para probar todas las rutas.
+                </p>
+                
+                <h3>Rutas Disponibles:</h3>
+                <ul>
+                    <% rutas.forEach(function(ruta) { %>
+                        <li><code><%= ruta.metodo %> <%= ruta.path %></code> - <%= ruta.descripcion %></li>
+                    <% }); %>
+                </ul>
+            </div>
+
+            <!-- Sección: Actividades de Aprendizaje -->
+            <div class="card">
+                <h2>📝 Actividades de Aprendizaje</h2>
+                <ol>
+                    <li>Abre las <strong>Herramientas de Desarrollador</strong> (F12)</li>
+                    <li>Ve a la pestaña <strong>Application → Cookies</strong></li>
+                    <li>Observa la cookie <code>nodeCookie</code> que se creó</li>
+                    <li>Prueba las diferentes rutas y observa los cambios</li>
+                    <li>Examina los headers HTTP en la pestaña Network</li>
+                </ol>
+
+                <p class="status warning">
+                    ⚠️ <strong>Nota:</strong> Recarga esta página para establecer una nueva cookie 
+                    con la fecha/hora actual.
+                </p>
+            </div>
+
+            <!-- Sección: Información Técnica -->
+            <% if (infoTecnica) { %>
+            <div class="card">
+                <h2>🔧 Información Técnica</h2>
+                <div class="concept">
+                    <h3>🛠️ Stack Tecnológico</h3>
+                    <ul>
+                        <li><strong>Runtime:</strong> Node.js <%= infoTecnica.nodeVersion %></li>
+                        <li><strong>Framework:</strong> Express.js</li>
+                        <li><strong>Motor de Plantillas:</strong> EJS</li>
+                        <li><strong>CSS Framework:</strong> Milligram</li>
+                        <li><strong>Entorno:</strong> <%= infoTecnica.entorno %></li>
+                    </ul>
+                </div>
+            </div>
+            <% } %>
+        </main>
+
+        <footer style="text-align: center; margin-top: 2rem; padding: 1rem; border-top: 1px solid #e1e8ed;">
+            <p>🎓 <strong>Tutorial Educativo</strong> - Aprendiendo Cookies con Node.js y Express</p>
+            <p>Desarrollado para fines educativos | 
+               <a href="https://github.com" target="_blank">Ver en GitHub</a> | 
+               <strong>Vista renderizada con EJS</strong>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // JavaScript para mostrar información de cookies (solo para demostración)
+        // Nota: No podemos acceder a cookies httpOnly desde JavaScript (¡eso es bueno!)
+        
+        console.log('🍪 Información sobre cookies:');
+        console.log('Cookies accesibles desde JavaScript:', document.cookie);
+        console.log('Nota: Las cookies httpOnly no aparecen aquí por seguridad');
+        
+        // Mostrar el número total de cookies del dominio
+        const cookiesCount = document.cookie.split(';').filter(c => c.trim()).length;
+        console.log('Total de cookies accesibles:', cookiesCount);
+        
+        // Mostrar información sobre el motor de plantillas
+        console.log('🎨 Motor de plantillas: EJS (Embedded JavaScript)');
+        console.log('📁 Archivo de vista: views/index.ejs');
+    </script>
+</body>
+</html> 
