@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 // Configurar variables
 const PORT = process.env.PORT || 3000;
 const app = express();
-const inicioServidor = new Date()            // Tiempo de inicio del servidor
+const inicioServidor = new Date(); // Tiempo de inicio del servidor
 
 // Configurar EJS como motor de plantillas
 app.set("view engine", "ejs");
@@ -74,6 +74,69 @@ app.get("/", (req, res) => {
 
   res.render("index", datosVista);
 });
+// Lectura de cookie
+app.get("/leer-cookie", (req, res) => {
+  const fechaAcceso = req.cookies.nodeCookie;
+  if (!fechaAcceso) {
+    res.json({
+      success: false,
+      mensaje: "No se ha establecido ninguna cookie",
+      tieneRegistroPrevio: false,
+    });
+  } else {
+    res.json({
+      success: true,
+      mensaje: `Fecha de visita: ${new Date(fechaAcceso).toLocaleString(
+        "es-ES"
+      )}`,
+      fechaAcceso: fechaAcceso,
+      tieneRegistroPrevio: true,
+    });
+  }
+});
+// Eliminar cookie
+app.get("/eliminar-cookie", (req, res) => {
+  const fechaAcceso = req.cookies.nodeCookie;
+  if (!fechaAcceso) {
+    res.status(404).json({
+      success: false,
+      mensaje: "No se ha establecido ninguna cookie",
+    });
+  } else {
+    res.clearCookie("nodeCookie");
+    res.json({
+      success: true,
+      mensaje: `Cookie eliminada: ${new Date(fechaAcceso).toLocaleString(
+        "es-ES"
+      )}`,
+      fechaEliminada: new Date().toISOString(),
+    });
+  }
+});
+// Listar todos los cookies
+app.get("/listar-cookies", (req, res) => {
+  try {
+    const listaCookies = Object.keys(req.cookies).map((cookie) => {
+      return {
+        nombre: cookie,
+        valor: req.cookies[cookie],
+      };
+    });
+    res.json({
+      success: true,
+      mensaje: "Lista de cookies",
+      listaCookies: listaCookies,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      mensaje: "Error al listar cookies",
+      error: error.message,
+    });
+  }
+});
+
+// Escuchar servidor
 app.listen(PORT, () => {
   console.log("🚀 Servidor iniciado exitosamente");
   console.log(`🌐 Disponible en: http://localhost:${PORT}`);
@@ -81,5 +144,5 @@ app.listen(PORT, () => {
   console.log(`   GET  / - Establecer cookie (EJS: views/index.ejs)`);
   console.log(`   GET  /leer-cookie - Leer cookie (JSON)`);
   console.log(`   GET  /eliminar-cookie - Eliminar cookie (JSON)`);
-  console.log(`   GET  /listar-cookies - Listar cookie (JSON)`); 
+  console.log(`   GET  /listar-cookies - Listar cookie (JSON)`);
 });
